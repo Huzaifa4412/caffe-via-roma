@@ -1,0 +1,2064 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Caffe Via Roma — Authentic Italian Coffee in Trastevere, Rome</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Luxurious+Script&family=Manrope:wght@500&family=Open+Sans:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/sheryjs/dist/Shery.css">
+  <style>
+    :root {
+      --background: 0 0% 9%;
+      --foreground: 0 0% 100%;
+      --primary: 0 0% 100%;
+      --primary-foreground: 0 0% 9%;
+      --secondary: 0 0% 97%;
+      --muted: 0 0% 20%;
+      --muted-foreground: 0 0% 75%;
+      --accent: 0 0% 15%;
+      --border: 0 0% 20%;
+      --radius: 2px;
+      --hero-cta-bg: 0 0% 97.3%;
+      --hero-cta-text: 0 0% 9%;
+      --gold: #CB9D06;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: auto; }
+    body {
+      font-family: 'Open Sans', sans-serif;
+      background: hsl(var(--background));
+      color: hsl(var(--foreground));
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+    img, svg, video { display: block; }
+    button { font: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+    a { color: inherit; text-decoration: none; }
+
+    .font-body { font-family: 'Open Sans', sans-serif; }
+    .font-accent { font-family: 'Instrument Serif', serif; }
+    .font-manrope { font-family: 'Manrope', sans-serif; font-weight: 500; }
+    .font-luxurious { font-family: 'Luxurious Script', cursive; }
+
+    .split-char {
+      padding-top: 0 !important;
+      padding-bottom: 0 !important;
+      line-height: 1 !important;
+      display: inline-block;
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s cubic-bezier(0.215,0.61,0.355,1), transform 0.8s cubic-bezier(0.215,0.61,0.355,1);
+    }
+    .split-char.in { opacity: 1; transform: translateY(0); }
+    .split-space { display: inline-block; width: 0.3em; }
+
+    /* ───────── NAVBAR ───────── */
+    .navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 20;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 16px;
+      background: transparent;
+      transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+    }
+    .navbar.scrolled {
+      background: rgba(0,0,0,0.9);
+      backdrop-filter: blur(80px);
+      -webkit-backdrop-filter: blur(80px);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.25);
+      padding: 8px 16px;
+    }
+    @media (min-width: 768px) { .navbar { padding-left: 40px; padding-right: 40px; } .navbar.scrolled { padding-left: 40px; padding-right: 40px; } }
+
+    .nav-center { display: flex; align-items: center; gap: 28px; }
+    .nav-logo svg { height: 48px; width: auto; transition: height 0.4s cubic-bezier(0.23,1,0.32,1); }
+    .navbar.scrolled .nav-logo svg { height: 32px; }
+    @media (max-width: 767px) { .nav-logo svg { height: 32px; } .navbar.scrolled .nav-logo svg { height: 24px; } }
+
+    .nav-item { position: relative; }
+    .nav-item > button { font-size: 14px; color: #fff; display: inline-flex; align-items: center; gap: 6px; padding: 6px 4px; transition: color 0.25s; white-space: nowrap; }
+    .nav-item > button:hover { color: var(--gold); }
+    .menu {
+      position: absolute; top: 100%; margin-top: 8px;
+      background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,0.18); padding: 8px 0;
+      min-width: 200px; border-radius: 2px;
+      opacity: 0; visibility: hidden; transform: translateY(6px);
+      transition: all 0.25s cubic-bezier(0.23,1,0.32,1); z-index: 30;
+    }
+    .nav-item:hover .menu { opacity: 1; visibility: visible; transform: translateY(0); }
+    .menu a { display: block; padding: 10px 16px; font-size: 13px; color: #1a1a1a; transition: all 0.2s; }
+    .menu a:hover { background: var(--gold); color: #fff; }
+
+    .nav-desktop { display: flex; align-items: center; gap: 28px; min-width: 0; }
+    .hamburger { display: none; color: #fff; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
+    @media (max-width: 767px) {
+      .nav-desktop { display: none; }
+      .hamburger { display: inline-flex; }
+    }
+
+    /* mobile overlay */
+    .mobile-menu {
+      position: fixed; inset: 0; z-index: 40;
+      background: rgba(0,0,0,0.95); backdrop-filter: blur(12px);
+      display: none; flex-direction: column; padding: 80px 24px 24px; gap: 4px; overflow-y: auto;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu .acc-head { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; font-size: 18px; color: #fff; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .mobile-menu .acc-body { display: none; padding: 4px 0 12px; }
+    .mobile-menu .acc-body.open { display: block; }
+    .mobile-menu .acc-body a { display: block; padding: 8px 12px; font-size: 14px; color: rgba(255,255,255,0.7); }
+    .mobile-close { position: absolute; top: 24px; right: 24px; color: #fff; }
+
+    /* ───────── FLOATING NAV ───────── */
+    .floating-nav {
+      position: fixed; right: 16px; top: 50%; transform: translateY(-50%);
+      z-index: 50; display: flex; flex-direction: column; gap: 16px;
+    }
+    @media (min-width: 768px) { .floating-nav { right: 24px; } }
+    @media (max-width: 767px) { .floating-nav { display: none; } }
+    .fab {
+      height: 48px; display: flex; align-items: center;
+      background: #000; color: #fff; border-radius: 9999px;
+      padding: 0 14px; overflow: hidden;
+      transition: background 0.3s cubic-bezier(0.23,1,0.32,1);
+    }
+    .fab:hover { background: var(--gold); }
+    .fab .ico { width: 20px; height: 20px; flex: 0 0 auto; }
+    .fab .lbl {
+      max-width: 0; opacity: 0; white-space: nowrap; overflow: hidden;
+      font-size: 13px; margin-left: 0;
+      transition: max-width 0.3s ease, opacity 0.3s ease, margin-left 0.3s ease;
+    }
+    .fab:hover .lbl { max-width: 180px; opacity: 1; margin-left: 10px; }
+    .shery-magnet { will-change: transform; }
+
+    /* ───────── HERO ───────── */
+    .hero-wrap { height: calc(100vh + 300vh); position: relative; }
+    .hero-sticky { position: sticky; top: 0; width: 100%; height: 100vh; overflow: visible; }
+    .hero-slide {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      clip-path: ellipse(150% 150% at 50% 50%);
+      will-change: clip-path;
+    }
+    .hero-slide video { width: 100%; height: 100%; object-fit: cover; }
+    .hero-slide::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0.25); }
+
+    .hero-h1 {
+      position: absolute; left: 0; right: 0; bottom: -26px;
+      font-family: 'Instrument Serif', serif;
+      font-size: 9.7vw; line-height: 1; white-space: nowrap; letter-spacing: -0.04em;
+      text-align: center; color: #fff; z-index: 4; pointer-events: none;
+    }
+    .hero-sub {
+      position: absolute; left: 0; right: 0; top: 0;
+      padding-top: calc(80px + 60px);
+      font-family: 'Luxurious Script', cursive; font-size: 3vw;
+      text-align: center; color: #fff; z-index: 4; pointer-events: none;
+    }
+    @media (max-width: 767px) {
+      .hero-h1 { font-size: 40px; line-height: 1.1; white-space: normal; bottom: 48px; padding: 0 16px; }
+      .hero-sub { font-size: 12vw; }
+    }
+
+    /* ───────── SCROLL MASK TRANSITION ───────── */
+    .smt-stage {
+      position: relative;
+      height: 460vh;
+      background: #050505;
+      color: #fff;
+      isolation: isolate;
+    }
+    .smt-layers {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #050505;
+    }
+    .smt-layers::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      background: linear-gradient(90deg, rgba(0,0,0,0.58), rgba(0,0,0,0.18) 48%, rgba(0,0,0,0.5));
+      pointer-events: none;
+    }
+    .smt-layer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .smt-layer image {
+      transform-origin: center;
+      will-change: transform;
+    }
+    .smt-copy {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: flex;
+      align-items: center;
+      padding: 0 8vw;
+      pointer-events: none;
+    }
+    .smt-panel {
+      position: absolute;
+      max-width: min(560px, 82vw);
+      clip-path: inset(0 0 100% 0);
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .smt-panel:first-child {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .smt-kicker {
+      font-family: 'Manrope', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 14px;
+    }
+    .smt-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(44px, 7vw, 108px);
+      line-height: 0.92;
+      text-transform: uppercase;
+      max-width: 8em;
+    }
+    .smt-text {
+      max-width: 430px;
+      margin-top: 22px;
+      font-size: 15px;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.76);
+    }
+    .smt-progress {
+      position: absolute;
+      left: 8vw;
+      right: 8vw;
+      bottom: 36px;
+      z-index: 6;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .smt-segment {
+      height: 2px;
+      background: rgba(255,255,255,0.22);
+      overflow: hidden;
+    }
+    .smt-segment span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--gold);
+    }
+    .smt-attribution {
+      position: absolute;
+      right: 8vw;
+      bottom: 56px;
+      z-index: 6;
+      font-size: 10px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.42);
+    }
+    @media (max-width: 767px) {
+      .smt-stage { height: 430vh; }
+      .smt-copy { align-items: flex-end; padding: 0 24px 112px; }
+      .smt-title { font-size: clamp(42px, 15vw, 68px); line-height: 0.96; }
+      .smt-text { font-size: 14px; line-height: 1.65; }
+      .smt-progress { left: 24px; right: 24px; bottom: 28px; }
+      .smt-attribution { display: none; }
+    }
+
+    /* ───────── GALLERY ───────── */
+    .gallery { background: #fff; padding: 32px 0; display: flex; justify-content: center; }
+    @media (min-width: 768px) { .gallery { padding: 64px 0; } }
+    .gallery-inner { width: 90%; }
+    @media (min-width: 768px) { .gallery-inner { width: 65%; } }
+    .gallery-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px 4px; }
+    @media (min-width: 1000px) { .gallery-grid { grid-template-columns: repeat(4, 1fr); } }
+    .g-item {
+      padding: 4px; opacity: 0; transform: translateY(120px); filter: blur(10px);
+      transition: opacity 0.8s cubic-bezier(0.215,0.61,0.355,1), transform 0.8s cubic-bezier(0.215,0.61,0.355,1), filter 0.8s cubic-bezier(0.215,0.61,0.355,1);
+    }
+    .g-item.in { opacity: 1; transform: translateY(0); filter: blur(0px); }
+    @media (min-width: 1000px) { .g-item.span2 { grid-column: span 2; } }
+    .g-frame { position: relative; aspect-ratio: 3 / 4; overflow: hidden; border-radius: 2px; }
+    .g-item.span2 .g-frame { aspect-ratio: 3 / 2; }
+    .g-frame .g-img {
+      position: absolute; inset: 0; background-size: cover; background-position: center;
+      transition: transform 6s cubic-bezier(0.22,0.61,0.36,1);
+    }
+    .g-frame:hover .g-img { transform: scale(1.2); }
+    .g-label { text-align: left; color: #000; font-size: 14px; margin-top: 8px; font-family: 'Manrope', sans-serif; font-weight: 500; }
+    .shery-enabled .shery-mask-card { cursor: none; }
+
+    /* ───────── PINNED RITUAL ───────── */
+    .pin-ritual {
+      position: relative;
+      min-height: 340vh;
+      background: #050505;
+      color: #fff;
+      overflow: clip;
+    }
+    .pin-ritual-sticky {
+      position: relative;
+      top: 0;
+      height: 100svh;
+      min-height: 560px;
+      display: grid;
+      grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+      align-items: stretch;
+      overflow: hidden;
+    }
+    .pin-copy {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      min-width: 0;
+      padding: clamp(72px, 12svh, 128px) clamp(32px, 7vw, 112px);
+      background: linear-gradient(90deg, rgba(0,0,0,0.92), rgba(0,0,0,0.62) 68%, rgba(0,0,0,0));
+    }
+    .pin-panel {
+      position: absolute;
+      left: clamp(32px, 7vw, 112px);
+      right: clamp(24px, 5vw, 72px);
+      max-width: 460px;
+      opacity: 0;
+      transform: translateY(36px);
+      filter: blur(8px);
+    }
+    .pin-panel:first-child {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+    .pin-kicker {
+      font-family: 'Manrope', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .pin-title {
+      font-family: 'Instrument Serif', serif;
+      font-size: clamp(42px, 6vw, 92px);
+      line-height: 0.94;
+      text-transform: uppercase;
+      overflow-wrap: anywhere;
+    }
+    .pin-text {
+      margin-top: 22px;
+      max-width: 390px;
+      font-size: 15px;
+      line-height: 1.75;
+      color: rgba(255,255,255,0.72);
+    }
+    .pin-media {
+      position: relative;
+      min-height: 100%;
+      overflow: hidden;
+      background: #111;
+    }
+    .shery-scroll-images,
+    .shery-scroll-images img {
+      width: 100%;
+      height: 100%;
+    }
+    .shery-scroll-images {
+      position: absolute;
+      inset: 0;
+    }
+    .shery-scroll-images img {
+      position: absolute;
+      inset: 0;
+      object-fit: cover;
+      opacity: 0;
+      transform-origin: center;
+      will-change: opacity, transform;
+    }
+    .shery-scroll-images img:first-child {
+      opacity: 1;
+    }
+    .pin-media::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(0,0,0,0.1), rgba(0,0,0,0.38));
+      pointer-events: none;
+    }
+    .pin-count {
+      position: absolute;
+      right: 42px;
+      bottom: 36px;
+      z-index: 3;
+      font-family: 'Manrope', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.72);
+    }
+    .pin-progress {
+      position: absolute;
+      left: clamp(32px, 7vw, 112px);
+      bottom: 42px;
+      z-index: 3;
+      width: min(340px, 44vw);
+      height: 2px;
+      background: rgba(255,255,255,0.22);
+      overflow: hidden;
+    }
+    .pin-progress span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--gold);
+    }
+    @media (max-width: 1023px) {
+      .pin-ritual { min-height: 320vh; }
+      .pin-ritual-sticky {
+        grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+        min-height: 540px;
+      }
+      .pin-copy {
+        padding-inline: 32px;
+        background: linear-gradient(90deg, rgba(0,0,0,0.9), rgba(0,0,0,0.48) 74%, rgba(0,0,0,0));
+      }
+      .pin-panel {
+        left: 32px;
+        right: 24px;
+        max-width: 360px;
+      }
+      .pin-title { font-size: clamp(40px, 7.5vw, 64px); }
+      .pin-text { font-size: 14px; line-height: 1.65; }
+      .pin-progress { left: 32px; width: min(300px, 42vw); }
+    }
+    @media (max-width: 767px) {
+      .pin-ritual { min-height: 285vh; }
+      .pin-ritual-sticky {
+        grid-template-columns: 1fr;
+        height: 100svh;
+        min-height: 520px;
+      }
+      .pin-copy {
+        min-height: 100%;
+        align-items: flex-end;
+        padding: 0 22px clamp(96px, 15svh, 128px);
+        background: linear-gradient(180deg, rgba(0,0,0,0.08) 22%, rgba(0,0,0,0.42) 56%, rgba(0,0,0,0.9));
+      }
+      .pin-media { position: absolute; inset: 0; }
+      .pin-panel {
+        left: 22px;
+        right: 22px;
+        bottom: clamp(106px, 18svh, 146px);
+        max-width: none;
+      }
+      .pin-title { font-size: clamp(38px, 12.5vw, 58px); line-height: 0.98; }
+      .pin-text {
+        max-width: 92vw;
+        margin-top: 16px;
+        font-size: 14px;
+        line-height: 1.58;
+      }
+      .pin-progress { left: 22px; right: 22px; bottom: 34px; width: auto; }
+      .pin-count { right: 22px; bottom: 52px; font-size: 11px; }
+    }
+    @media (max-width: 420px) {
+      .pin-ritual-sticky { min-height: 500px; }
+      .pin-copy { padding-inline: 18px; }
+      .pin-panel {
+        left: 18px;
+        right: 18px;
+        bottom: 104px;
+      }
+      .pin-title { font-size: clamp(34px, 12vw, 48px); }
+      .pin-text { font-size: 13px; line-height: 1.52; }
+      .pin-progress { left: 18px; right: 18px; }
+      .pin-count { right: 18px; }
+    }
+
+    /* ───────── FULL MENU ───────── */
+    .menu-section { background: #fff; padding: 80px 24px; }
+    @media (min-width: 768px) { .menu-section { padding: 120px 0; } }
+    .menu-inner { max-width: 900px; margin: 0 auto; width: 90%; }
+    @media (min-width: 768px) { .menu-inner { width: 70%; } }
+    .menu-heading {
+      font-family: 'Instrument Serif', serif; text-transform: uppercase;
+      font-size: 28px; text-align: center; color: #000; margin-bottom: 56px;
+    }
+    @media (min-width: 768px) { .menu-heading { font-size: 40px; margin-bottom: 72px; } }
+    .menu-category {
+      margin-bottom: 48px;
+      opacity: 0; transform: translateY(60px); filter: blur(8px);
+      transition: opacity 0.7s cubic-bezier(0.215,0.61,0.355,1), transform 0.7s cubic-bezier(0.215,0.61,0.355,1), filter 0.7s cubic-bezier(0.215,0.61,0.355,1);
+    }
+    .menu-category.in { opacity: 1; transform: translateY(0); filter: blur(0px); }
+    .menu-cat-title {
+      font-family: 'Manrope', sans-serif; font-weight: 500;
+      font-size: 13px; letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 20px; padding-bottom: 12px;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+    }
+    .menu-row {
+      display: flex; justify-content: space-between; align-items: baseline;
+      padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.04);
+      transition: color 0.25s ease, padding-left 0.25s ease, background-color 0.25s ease;
+    }
+    .menu-row.shery-hover-media { cursor: pointer; }
+    .menu-row.shery-hover-media:hover { padding-left: 10px; background: rgba(203,157,6,0.05); }
+    .menu-row.shery-hover-media:hover .menu-row-name { color: var(--gold); }
+    .menu-row-name { font-size: 15px; color: #1a1a1a; font-weight: 400; }
+    .menu-row-desc { font-size: 12px; color: rgba(0,0,0,0.45); margin-top: 2px; }
+    .menu-row-price { font-family: 'Manrope', sans-serif; font-weight: 500; font-size: 14px; color: #000; white-space: nowrap; margin-left: 16px; }
+    .movercirc,
+    .movercirc.blend {
+      background: #111 !important;
+      filter: none !important;
+      mix-blend-mode: normal !important;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.32);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+    .movercirc img,
+    .movercirc video {
+      filter: none !important;
+      mix-blend-mode: normal !important;
+    }
+
+    /* ───────── ABOUT ───────── */
+    .about { background: #fff; padding: 64px 24px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    @media (min-width: 768px) { .about { padding: 128px 18%; } }
+    .about-title { font-family: 'Luxurious Script', cursive; font-size: 32px; text-align: center; color: #000; margin-bottom: 20px; }
+    .about-body {
+      font-family: 'Instrument Serif', serif; text-transform: uppercase;
+      font-size: 24px; line-height: 36px; text-align: center; color: #000;
+    }
+    @media (min-width: 768px) { .about-body { font-size: 40px; line-height: 56px; } }
+    .about-body .word { display: inline-block; opacity: 0.1; filter: blur(4px); transition: none; margin-right: 0.18em; }
+    .about-btn { margin-top: 36px; padding: 12px 32px; background: #000; color: #fff; font-family: 'Manrope', sans-serif; font-weight: 500; font-size: 14px; letter-spacing: 0.04em; transition: background-color 0.3s; }
+    .about-btn:hover { background: var(--gold); }
+
+    /* ───────── EXPERIENCE CARDS ───────── */
+    .experience { position: relative; padding: 96px 0; display: flex; flex-direction: column; align-items: center; background:
+        linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800"><rect width="1200" height="800" fill="%23161310"/><g fill="%23CB9D06" fill-opacity="0.10"><circle cx="200" cy="180" r="140"/><circle cx="980" cy="620" r="200"/><circle cx="640" cy="120" r="90"/></g></svg>');
+      background-size: cover; background-position: center; overflow: hidden; }
+    .experience-title {
+      font-family: 'Instrument Serif', serif; text-transform: uppercase;
+      font-size: 28px; line-height: 1.4; color: hsl(var(--primary)); text-align: center; margin-bottom: 40px; padding: 0 16px;
+    }
+    @media (min-width: 768px) { .experience-title { font-size: 40px; } }
+    .experience-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 90%; }
+    @media (min-width: 768px) { .experience-cards { grid-template-columns: repeat(4, 1fr); width: 64%; } }
+    .e-card {
+      background: #000; padding: 24px 16px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 12px;
+      opacity: 0; transform: translateY(80px); transition: opacity 0.7s cubic-bezier(0.215,0.61,0.355,1), transform 0.7s cubic-bezier(0.215,0.61,0.355,1);
+    }
+    @media (min-width: 768px) { .e-card { padding: 32px 24px; gap: 16px; } }
+    .e-card.in { opacity: 1; transform: translateY(0); }
+    .e-card .e-ico { width: 40px; height: 40px; color: var(--gold); }
+    @media (min-width: 768px) { .e-card .e-ico { width: 48px; height: 48px; } }
+    .e-card .e-lbl { color: hsl(var(--primary)); font-family: 'Open Sans', sans-serif; font-size: 12px; letter-spacing: 0.04em; text-transform: capitalize; }
+    @media (min-width: 768px) { .e-card .e-lbl { font-size: 14px; } }
+    @keyframes lottiepulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.12); } }
+    .e-card .e-ico svg { animation: lottiepulse 2.4s ease-in-out infinite; }
+
+    /* ───────── EVENTS / SPECIALS ───────── */
+    .events { background: #fff; padding: 80px 24px; display: flex; flex-direction: column; align-items: center; }
+    @media (min-width: 768px) { .events { padding: 120px 0; } }
+    .events-inner { width: 90%; max-width: 900px; }
+    @media (min-width: 768px) { .events-inner { width: 70%; } }
+    .events-title {
+      font-family: 'Instrument Serif', serif; text-transform: uppercase;
+      font-size: 28px; text-align: center; color: #000; margin-bottom: 48px;
+    }
+    @media (min-width: 768px) { .events-title { font-size: 40px; margin-bottom: 64px; } }
+    .event-card {
+      background: #fafafa; padding: 32px; margin-bottom: 24px; display: flex; gap: 24px; align-items: flex-start;
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.7s cubic-bezier(0.215,0.61,0.355,1), transform 0.7s cubic-bezier(0.215,0.61,0.355,1);
+    }
+    .event-card.in { opacity: 1; transform: translateY(0); }
+    .event-card:last-child { margin-bottom: 0; }
+    .event-icon { width: 48px; height: 48px; flex: 0 0 auto; color: var(--gold); }
+    .event-text h3 { font-family: 'Manrope', sans-serif; font-weight: 500; font-size: 16px; color: #000; margin-bottom: 8px; }
+    .event-text p { font-size: 14px; color: rgba(0,0,0,0.55); line-height: 1.6; }
+
+    /* ───────── RESERVATION ───────── */
+    .reservation { background: #000; padding: 96px 24px; display: flex; flex-direction: column; align-items: center; }
+    @media (min-width: 768px) { .reservation { padding: 128px 0; } }
+    .reservation-inner { width: 90%; max-width: 640px; }
+    .reservation-title {
+      font-family: 'Instrument Serif', serif; text-transform: uppercase;
+      font-size: 28px; color: #fff; text-align: center; margin-bottom: 12px;
+    }
+    @media (min-width: 768px) { .reservation-title { font-size: 40px; } }
+    .reservation-sub { font-size: 14px; color: rgba(255,255,255,0.5); text-align: center; margin-bottom: 48px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.6; }
+    .res-form { display: flex; flex-direction: column; gap: 20px; }
+    .res-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 480px) { .res-row { grid-template-columns: 1fr; } }
+    .res-field label { display: block; font-family: 'Manrope', sans-serif; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+    .res-field input, .res-field select, .res-field textarea {
+      width: 100%; padding: 14px 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 2px; color: #fff; font-family: 'Open Sans', sans-serif; font-size: 14px;
+      transition: border-color 0.25s; outline: none;
+    }
+    .res-field input:focus, .res-field select:focus, .res-field textarea:focus { border-color: var(--gold); }
+    .res-field input::placeholder, .res-field textarea::placeholder { color: rgba(255,255,255,0.25); }
+    .res-field select option { background: #1a1a1a; color: #fff; }
+    .res-field textarea { resize: vertical; min-height: 100px; }
+    .res-field .field-error { font-size: 12px; color: #e74c3c; margin-top: 6px; display: none; }
+    .res-field.has-error input, .res-field.has-error select, .res-field.has-error textarea { border-color: #e74c3c; }
+    .res-field.has-error .field-error { display: block; }
+    .res-submit {
+      padding: 14px 40px; background: #fff; color: #000; font-family: 'Manrope', sans-serif; font-weight: 500;
+      font-size: 14px; letter-spacing: 0.04em; border: none; cursor: pointer; transition: background-color 0.3s;
+      align-self: flex-start;
+    }
+    .res-submit:hover { background: var(--gold); }
+    .res-success { display: none; text-align: center; padding: 48px 0; }
+    .res-success.show { display: block; }
+    .res-success svg { width: 56px; height: 56px; color: var(--gold); margin: 0 auto 20px; }
+    .res-success h3 { font-family: 'Manrope', sans-serif; font-size: 20px; color: #fff; margin-bottom: 8px; }
+    .res-success p { font-size: 14px; color: rgba(255,255,255,0.5); }
+
+    /* ───────── TESTIMONIALS ───────── */
+    .testimonials { background: #fff; padding: 80px 24px; display: flex; flex-direction: column; align-items: center; }
+    @media (min-width: 768px) { .testimonials { padding: 120px 0; } }
+    .testimonials-inner { width: 90%; max-width: 900px; }
+    @media (min-width: 768px) { .testimonials-inner { width: 70%; } }
+    .testimonials-title {
+      font-family: 'Instrument Serif', serif; text-transform: uppercase;
+      font-size: 28px; text-align: center; color: #000; margin-bottom: 48px;
+    }
+    @media (min-width: 768px) { .testimonials-title { font-size: 40px; margin-bottom: 64px; } }
+    .testimonial-grid { display: grid; grid-template-columns: 1fr; gap: 24px; }
+    @media (min-width: 768px) { .testimonial-grid { grid-template-columns: repeat(3, 1fr); } }
+    .testimonial-card {
+      padding: 32px; background: #fafafa; border-left: 3px solid var(--gold);
+      opacity: 0; transform: translateY(40px);
+      transition: opacity 0.7s cubic-bezier(0.215,0.61,0.355,1), transform 0.7s cubic-bezier(0.215,0.61,0.355,1);
+    }
+    .testimonial-card.in { opacity: 1; transform: translateY(0); }
+    .testimonial-card p { font-family: 'Instrument Serif', serif; font-size: 18px; color: #1a1a1a; line-height: 1.5; font-style: italic; margin-bottom: 16px; }
+    .testimonial-card .reviewer { font-family: 'Manrope', sans-serif; font-size: 12px; color: rgba(0,0,0,0.4); letter-spacing: 0.04em; }
+
+    /* ───────── FOOTER ───────── */
+    .footer { background: #fff; color: #000; width: 100%; }
+    .footer-top { padding: 48px 24px 40px; }
+    @media (min-width: 768px) { .footer-top { padding: 80px 40px 64px; } }
+    @media (min-width: 1024px) { .footer-top { padding: 80px 64px 64px; } }
+    .footer-head { display: grid; grid-template-columns: 1fr; gap: 40px; margin-bottom: 56px; }
+    @media (min-width: 768px) { .footer-head { grid-template-columns: 1fr auto; } }
+    .footer-phone { font-size: 13px; color: rgba(0,0,0,0.4); text-transform: uppercase; letter-spacing: 0.06em; }
+    .footer-email { font-size: 14px; font-weight: 700; margin-top: 8px; transition: color 0.25s; }
+    .footer-email:hover { color: var(--gold); }
+    .footer-hours { font-size: 13px; color: rgba(0,0,0,0.5); margin-top: 16px; line-height: 1.8; }
+    .footer-hours strong { color: #000; }
+    .footer-cols { display: flex; gap: 64px; }
+    .footer-col h4 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: rgba(0,0,0,0.4); margin-bottom: 16px; }
+    .footer-col a { display: block; font-size: 15px; color: #000; font-weight: 500; margin-bottom: 10px; transition: color 0.25s; }
+    .footer-col a:hover { color: var(--gold); }
+    .footer-location {
+      font-size: 14px; color: rgba(0,0,0,0.5); margin-top: 20px; line-height: 1.6;
+    }
+    .footer-socials { display: flex; gap: 16px; margin-top: 16px; }
+    .footer-socials a {
+      width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
+      border: 1px solid rgba(0,0,0,0.15); border-radius: 50%;
+      transition: all 0.25s;
+    }
+    .footer-socials a:hover { background: var(--gold); border-color: var(--gold); color: #fff; }
+    .footer-socials a svg { width: 16px; height: 16px; }
+    .footer-bottom { background: #000; color: #fff; padding: 16px 24px; display: flex; flex-direction: column; gap: 8px; justify-content: space-between; align-items: center; }
+    @media (min-width: 768px) { .footer-bottom { flex-direction: row; padding: 16px 40px; } }
+    @media (min-width: 1024px) { .footer-bottom { padding: 16px 64px; } }
+    .footer-bottom .cr { font-size: 12px; color: rgba(255,255,255,0.4); }
+    .footer-bottom .legal { display: flex; gap: 24px; }
+    .footer-bottom .legal a { font-size: 12px; color: rgba(255,255,255,0.4); transition: color 0.25s; }
+    .footer-bottom .legal a:hover { color: #fff; }
+
+    /* Responsive hardening */
+    html,
+    body {
+      width: 100%;
+      max-width: 100%;
+    }
+    body {
+      overflow-x: clip;
+    }
+    img,
+    svg,
+    video {
+      max-width: 100%;
+    }
+    .navbar {
+      gap: 12px;
+    }
+    .nav-logo svg {
+      max-width: min(280px, calc(100vw - 96px));
+    }
+    .nav-item > button,
+    .mobile-menu .acc-head,
+    .mobile-menu .acc-body a,
+    .mobile-close,
+    .fab,
+    .about-btn,
+    .res-submit,
+    .footer-col a {
+      min-height: 44px;
+    }
+    .hero-wrap {
+      height: calc(100svh + 300svh);
+    }
+    .hero-sticky,
+    .smt-layers {
+      height: 100svh;
+    }
+    .hero-h1 {
+      bottom: clamp(18px, 3vw, 36px);
+      padding-inline: clamp(16px, 3vw, 48px);
+      font-size: clamp(48px, 9vw, 168px);
+      letter-spacing: 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+    }
+    .hero-sub {
+      padding-top: clamp(96px, 13svh, 150px);
+      font-size: clamp(36px, 5vw, 72px);
+    }
+    .smt-copy,
+    .pin-copy,
+    .menu-inner,
+    .events-inner,
+    .reservation-inner,
+    .testimonials-inner,
+    .footer-top {
+      min-width: 0;
+    }
+    .smt-panel {
+      max-width: min(560px, calc(100vw - 48px));
+    }
+    .smt-title,
+    .pin-title,
+    .experience-title,
+    .menu-heading,
+    .events-title,
+    .reservation-title,
+    .testimonials-title {
+      overflow-wrap: anywhere;
+      letter-spacing: 0;
+    }
+    .gallery-inner,
+    .menu-inner,
+    .events-inner,
+    .testimonials-inner {
+      width: min(92vw, 1100px);
+    }
+    .gallery-grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+      gap: clamp(16px, 3vw, 40px);
+    }
+    .g-item {
+      min-width: 0;
+      padding: 0;
+    }
+    .g-label {
+      overflow-wrap: anywhere;
+    }
+    .experience {
+      padding: clamp(72px, 10vw, 120px) 20px;
+    }
+    .experience-cards {
+      width: min(92vw, 980px);
+      grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
+      gap: 10px;
+    }
+    .event-card {
+      min-width: 0;
+    }
+    .event-text {
+      min-width: 0;
+    }
+    .menu-row > div:first-child {
+      min-width: 0;
+    }
+    .menu-row-name,
+    .menu-row-desc,
+    .event-text h3,
+    .event-text p,
+    .testimonial-card p,
+    .testimonial-card .reviewer,
+    .footer-email,
+    .footer-location {
+      overflow-wrap: anywhere;
+    }
+    .testimonial-grid {
+      grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+    }
+    .footer-cols {
+      flex-wrap: wrap;
+      gap: 40px 64px;
+    }
+    .footer-bottom {
+      text-align: center;
+    }
+    @media (min-width: 1100px) {
+      .gallery-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+    }
+    @media (min-width: 1536px) {
+      .gallery-inner,
+      .menu-inner,
+      .events-inner,
+      .testimonials-inner {
+        width: min(78vw, 1180px);
+      }
+      .reservation-inner {
+        width: min(80vw, 680px);
+      }
+    }
+    @media (max-width: 1023px) {
+      .nav-desktop {
+        gap: 18px;
+      }
+      .nav-logo svg {
+        max-width: 220px;
+      }
+      .testimonial-grid {
+        grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
+      }
+    }
+    @media (max-width: 767px) {
+      .navbar,
+      .navbar.scrolled {
+        padding-inline: 18px;
+      }
+      .mobile-menu {
+        padding: 76px 20px 28px;
+      }
+      .hero-wrap {
+        height: calc(100svh + 240svh);
+      }
+      .hero-h1 {
+        bottom: clamp(58px, 12svh, 92px);
+        font-size: clamp(42px, 15vw, 68px);
+        line-height: 1;
+      }
+      .hero-sub {
+        padding-top: clamp(86px, 14svh, 124px);
+        font-size: clamp(44px, 13vw, 68px);
+      }
+      .smt-copy {
+        padding: 0 20px 108px;
+      }
+      .smt-panel {
+        max-width: calc(100vw - 40px);
+      }
+      .smt-title {
+        font-size: clamp(38px, 13vw, 62px);
+      }
+      .gallery {
+        padding: 40px 0;
+      }
+      .gallery-inner,
+      .menu-inner,
+      .events-inner,
+      .testimonials-inner,
+      .reservation-inner {
+        width: min(100% - 40px, 680px);
+      }
+      .pin-title {
+        font-size: clamp(36px, 11.5vw, 54px);
+      }
+      .about {
+        padding: 72px 20px;
+      }
+      .about-body {
+        font-size: clamp(24px, 7vw, 34px);
+        line-height: 1.22;
+      }
+      .menu-section,
+      .events,
+      .reservation,
+      .testimonials {
+        padding-block: 76px;
+        padding-inline: 0;
+      }
+      .event-card {
+        padding: 26px 22px;
+        gap: 18px;
+      }
+      .res-row {
+        grid-template-columns: 1fr;
+      }
+      .res-submit {
+        width: 100%;
+      }
+      .footer-head {
+        gap: 32px;
+      }
+      .footer-cols {
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      }
+      .footer-bottom .legal {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px 20px;
+      }
+    }
+    @media (max-width: 560px) {
+      .gallery-grid,
+      .experience-cards,
+      .testimonial-grid {
+        grid-template-columns: 1fr;
+      }
+      .event-card {
+        flex-direction: column;
+      }
+      .event-icon {
+        width: 42px;
+        height: 42px;
+      }
+      .menu-row {
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .menu-row-price {
+        margin-left: 10px;
+      }
+    }
+    @media (max-width: 380px) {
+      .navbar,
+      .navbar.scrolled {
+        padding-inline: 14px;
+      }
+      .mobile-menu {
+        padding-inline: 18px;
+      }
+      .gallery-inner,
+      .menu-inner,
+      .events-inner,
+      .testimonials-inner,
+      .reservation-inner {
+        width: min(100% - 32px, 680px);
+      }
+      .menu-row {
+        flex-direction: column;
+      }
+      .menu-row-price {
+        margin-left: 0;
+      }
+      .footer-top {
+        padding-inline: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ───────── NAVBAR ───────── -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-desktop">
+      <div class="nav-item">
+        <button>Our Story <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="menu">
+          <a href="#about">About Us</a>
+          <a href="#experience">The Experience</a>
+          <a href="#events">Events &amp; Specials</a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <button>Menu <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="menu">
+          <a href="#menu-coffee">Coffee &amp; Hot Drinks</a>
+          <a href="#menu-cold">Cold Drinks</a>
+          <a href="#menu-pastry">Pastries &amp; Sweets</a>
+          <a href="#menu-food">Breakfast &amp; Light Meals</a>
+        </div>
+      </div>
+
+      <a href="#" class="nav-logo shery-magnet" aria-label="Caffe Via Roma">
+        <svg viewBox="0 0 280 80" fill="none">
+          <text x="140" y="52" text-anchor="middle" font-family="'Instrument Serif', serif" font-size="36" fill="white" letter-spacing="0">Caff&egrave; Via Roma</text>
+        </svg>
+      </a>
+
+      <div class="nav-item">
+        <button>Visit Us <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="menu">
+          <a href="#reservation">Reserve a Table</a>
+          <a href="#footer">Find Us</a>
+          <a href="#footer">Opening Hours</a>
+        </div>
+      </div>
+      <div class="nav-item">
+        <button>Connect <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg></button>
+        <div class="menu">
+          <a href="https://instagram.com/caffeviaroma" target="_blank" rel="noopener">Instagram</a>
+          <a href="https://facebook.com/caffeviaroma" target="_blank" rel="noopener">Facebook</a>
+          <a href="https://tiktok.com/@caffeviaroma" target="_blank" rel="noopener">TikTok</a>
+          <a href="mailto:info@caffeviaroma.it">Email Us</a>
+        </div>
+      </div>
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+  </nav>
+
+  <!-- mobile menu overlay -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" id="mobileClose" aria-label="Close menu">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <div class="acc">
+      <div class="acc-head" data-acc>Our Story <span>+</span></div>
+      <div class="acc-body"><a href="#about">About Us</a><a href="#experience">The Experience</a><a href="#events">Events &amp; Specials</a></div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" data-acc>Menu <span>+</span></div>
+      <div class="acc-body"><a href="#menu-coffee">Coffee &amp; Hot Drinks</a><a href="#menu-cold">Cold Drinks</a><a href="#menu-pastry">Pastries &amp; Sweets</a><a href="#menu-food">Breakfast &amp; Light Meals</a></div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" data-acc>Visit Us <span>+</span></div>
+      <div class="acc-body"><a href="#reservation">Reserve a Table</a><a href="#footer">Find Us</a><a href="#footer">Opening Hours</a></div>
+    </div>
+    <div class="acc">
+      <div class="acc-head" data-acc>Connect <span>+</span></div>
+      <div class="acc-body"><a href="https://instagram.com/caffeviaroma" target="_blank">Instagram</a><a href="https://facebook.com/caffeviaroma" target="_blank">Facebook</a><a href="https://tiktok.com/@caffeviaroma" target="_blank">TikTok</a><a href="mailto:info@caffeviaroma.it">Email Us</a></div>
+    </div>
+  </div>
+
+  <!-- ───────── FLOATING NAV ───────── -->
+  <div class="floating-nav">
+    <a href="#reservation" class="fab shery-magnet">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      <span class="lbl">Reserve a Table</span>
+    </a>
+    <a href="https://instagram.com/caffeviaroma" target="_blank" rel="noopener" class="fab shery-magnet">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      <span class="lbl">Instagram</span>
+    </a>
+    <a href="tel:+39065551234" class="fab shery-magnet">
+      <svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <span class="lbl">Call Us</span>
+    </a>
+  </div>
+
+  <!-- ───────── SECTION 1: HERO ───────── -->
+  <div class="hero-wrap" id="heroWrap">
+    <section class="hero-sticky">
+      <div class="hero-slide" id="slide0" style="z-index:1">
+        <video src="https://plugin-assets.open-design.ai/plugins/cinematic-landing-page/hf_20260515_113235_88e0d62e-8103-40c1-948e-f0a4f886ffd1-e00afb.mp4" autoplay loop muted playsinline></video>
+      </div>
+      <div class="hero-slide" id="slide1" style="z-index:2">
+        <video src="https://plugin-assets.open-design.ai/plugins/cinematic-landing-page/hf_20260515_114315_ee3663e6-bd79-41b4-9e5b-0fae62827eb9-b97001.mp4" autoplay loop muted playsinline></video>
+      </div>
+      <div class="hero-slide" id="slide2" style="z-index:3">
+        <video src="https://plugin-assets.open-design.ai/plugins/cinematic-landing-page/hf_20260515_114559_dca18b14-90f5-47c4-8a84-3cbae9bd8a0c-62cb47.mp4" autoplay loop muted playsinline></video>
+      </div>
+      <div class="hero-sub" id="heroSub" data-split>since 1962</div>
+      <h1 class="hero-h1" id="heroH1" data-split>CAFFE VIA ROMA</h1>
+    </section>
+  </div>
+
+  <!-- ───────── SECTION 2: SCROLL MASK TRANSITION ───────── -->
+  <section class="smt-stage" id="scrollMaskStage" data-variant="horizontal-blinds" aria-label="Caffe Via Roma atmosphere">
+    <div class="smt-layers">
+      <svg class="smt-layer" data-smt-layer="0" viewBox="0 0 100 100" preserveAspectRatio="none" style="z-index: 1">
+        <defs>
+          <mask id="smt-mask-1" maskUnits="userSpaceOnUse">
+            <rect class="smt-mask-base" x="0" y="0" width="100" height="100" fill="black"></rect>
+            <g class="smt-cells" id="smt-cells-1"></g>
+          </mask>
+        </defs>
+        <image href="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=1800&q=85" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" mask="url(#smt-mask-1)"></image>
+      </svg>
+      <svg class="smt-layer" data-smt-layer="1" viewBox="0 0 100 100" preserveAspectRatio="none" style="z-index: 2">
+        <defs>
+          <mask id="smt-mask-2" maskUnits="userSpaceOnUse">
+            <rect class="smt-mask-base" x="0" y="0" width="100" height="100" fill="black"></rect>
+            <g class="smt-cells" id="smt-cells-2"></g>
+          </mask>
+        </defs>
+        <image href="https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1800&q=85" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" mask="url(#smt-mask-2)"></image>
+      </svg>
+      <svg class="smt-layer" data-smt-layer="2" viewBox="0 0 100 100" preserveAspectRatio="none" style="z-index: 3">
+        <defs>
+          <mask id="smt-mask-3" maskUnits="userSpaceOnUse">
+            <rect class="smt-mask-base" x="0" y="0" width="100" height="100" fill="black"></rect>
+            <g class="smt-cells" id="smt-cells-3"></g>
+          </mask>
+        </defs>
+        <image href="https://images.unsplash.com/photo-1517433367423-c7e5b0f35086?auto=format&fit=crop&w=1800&q=85" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice" mask="url(#smt-mask-3)"></image>
+      </svg>
+      <div class="smt-copy" aria-hidden="true">
+        <div class="smt-panel">
+          <div class="smt-kicker">Morning ritual</div>
+          <h2 class="smt-title">Steam, glass, marble</h2>
+          <p class="smt-text">The first espresso lands before the shutters are fully open, with warm light moving across the counter.</p>
+        </div>
+        <div class="smt-panel">
+          <div class="smt-kicker">At the bar</div>
+          <h2 class="smt-title">A quick pause in Rome</h2>
+          <p class="smt-text">Horizontal mask reveals echo the rhythm of cups, plates, voices, and the slow street outside.</p>
+        </div>
+        <div class="smt-panel">
+          <div class="smt-kicker">House pastries</div>
+          <h2 class="smt-title">Baked fresh each morning</h2>
+          <p class="smt-text">Cornetti, tiramisu, and small sweets close the sequence before the menu highlights appear below.</p>
+        </div>
+      </div>
+      <div class="smt-progress" aria-hidden="true">
+        <div class="smt-segment"><span></span></div>
+        <div class="smt-segment"><span></span></div>
+        <div class="smt-segment"><span></span></div>
+      </div>
+      <div class="smt-attribution">Mask transition inspired by Codrops / Hiro-kiii</div>
+    </div>
+  </section>
+
+  <!-- ───────── SECTION 3: GALLERY (Menu Highlights) ───────── -->
+  <section class="gallery">
+    <div class="gallery-inner">
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </div>
+  </section>
+
+  <!-- ───────── SECTION 4: PINNED RITUAL ───────── -->
+  <section class="pin-ritual" id="pinRitual" aria-label="Coffee ritual scroll story">
+    <div class="pin-ritual-sticky">
+      <div class="pin-copy">
+        <div class="pin-panel">
+          <div class="pin-kicker">01 / The bar</div>
+          <h2 class="pin-title shery-text-animate">Espresso first</h2>
+          <p class="pin-text">Start at the counter with a proper Roman espresso, pulled short, dark, and served fast.</p>
+        </div>
+        <div class="pin-panel">
+          <div class="pin-kicker">02 / The pastry case</div>
+          <h2 class="pin-title shery-text-animate">Cornetti at sunrise</h2>
+          <p class="pin-text">Fresh pastry, warm cream, and a quiet table before Trastevere wakes up around you.</p>
+        </div>
+        <div class="pin-panel">
+          <div class="pin-kicker">03 / The slow table</div>
+          <h2 class="pin-title shery-text-animate">Stay for lunch</h2>
+          <p class="pin-text">Move from coffee to bruschetta, salumi, music nights, and conversations that stretch into evening.</p>
+        </div>
+      </div>
+      <div class="pin-media">
+        <div class="shery-scroll-images" id="sheryScrollImages">
+          <img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1600&q=85" alt="Fresh espresso in a cafe cup">
+          <img src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=1600&q=85" alt="Golden croissants and pastries on a counter">
+          <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1600&q=85" alt="Warm cafe restaurant interior prepared for guests">
+        </div>
+        <div class="pin-count" id="pinCount">01 / 03</div>
+      </div>
+      <div class="pin-progress" aria-hidden="true"><span id="pinProgressFill"></span></div>
+    </div>
+  </section>
+
+  <!-- ───────── SECTION 5: FULL MENU ───────── -->
+  <section class="menu-section" id="fullMenu">
+    <div class="menu-inner">
+      <h2 class="menu-heading" data-split>Our Menu</h2>
+
+      <div class="menu-category" id="menu-coffee">
+        <div class="menu-cat-title">Coffee &amp; Hot Drinks</div>
+      </div>
+      <div class="menu-category" id="menu-cold">
+        <div class="menu-cat-title">Cold Drinks</div>
+      </div>
+      <div class="menu-category" id="menu-pastry">
+        <div class="menu-cat-title">Pastries &amp; Sweets</div>
+      </div>
+      <div class="menu-category" id="menu-food">
+        <div class="menu-cat-title">Breakfast &amp; Light Meals</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── SECTION 6: ABOUT ───────── -->
+  <section class="about" id="about">
+    <div class="about-title">Our Story</div>
+    <div class="about-body" id="aboutBody">Tucked into a quiet corner of Via Roma in the heart of Trastevere, Caffe Via Roma has been serving authentic Italian coffee to locals and travelers since 1962. Our baristas still prepare every espresso the traditional way, our cornetti are baked fresh each morning, and our doors have always been open to anyone who wants to sit, sip, and feel the rhythm of Roman life.</div>
+    <button class="about-btn shery-magnet">Read more</button>
+  </section>
+
+  <!-- ───────── SECTION 7: EXPERIENCE CARDS ───────── -->
+  <section class="experience" id="experience">
+    <h2 class="experience-title" id="experienceTitle" data-split>The Caffe Experience</h2>
+    <div class="experience-cards" id="experienceCards"></div>
+  </section>
+
+  <!-- ───────── SECTION 8: EVENTS / SPECIALS ───────── -->
+  <section class="events" id="events">
+    <div class="events-inner">
+      <h2 class="events-title shery-text-animate">Events &amp; Seasonal Specials</h2>
+      <div id="eventsContainer"></div>
+    </div>
+  </section>
+
+  <!-- ───────── SECTION 9: RESERVATION ───────── -->
+  <section class="reservation" id="reservation">
+    <div class="reservation-inner">
+      <h2 class="reservation-title" data-split>Reserve a Table</h2>
+      <p class="reservation-sub">We accept reservations for groups up to 6 and small celebrations. Call, email, or fill in the form below.</p>
+
+      <form class="res-form" id="resForm" novalidate>
+        <div class="res-row">
+          <div class="res-field">
+            <label for="resName">Name *</label>
+            <input type="text" id="resName" placeholder="Your name" required>
+            <div class="field-error">Please enter your name.</div>
+          </div>
+          <div class="res-field">
+            <label for="resEmail">Email *</label>
+            <input type="email" id="resEmail" placeholder="you@example.com" required>
+            <div class="field-error">Please enter a valid email.</div>
+          </div>
+        </div>
+        <div class="res-row">
+          <div class="res-field">
+            <label for="resPhone">Phone</label>
+            <input type="tel" id="resPhone" placeholder="+39 ...">
+          </div>
+          <div class="res-field">
+            <label for="resGuests">Guests *</label>
+            <select id="resGuests" required>
+              <option value="" disabled selected>How many?</option>
+              <option value="1">1 guest</option>
+              <option value="2">2 guests</option>
+              <option value="3">3 guests</option>
+              <option value="4">4 guests</option>
+              <option value="5">5 guests</option>
+              <option value="6">6 guests</option>
+            </select>
+            <div class="field-error">Please select number of guests.</div>
+          </div>
+        </div>
+        <div class="res-row">
+          <div class="res-field">
+            <label for="resDate">Date *</label>
+            <input type="date" id="resDate" required>
+            <div class="field-error">Please choose a date.</div>
+          </div>
+          <div class="res-field">
+            <label for="resTime">Time *</label>
+            <select id="resTime" required>
+              <option value="" disabled selected>Preferred time</option>
+              <option value="07:00">7:00</option>
+              <option value="08:00">8:00</option>
+              <option value="09:00">9:00</option>
+              <option value="10:00">10:00</option>
+              <option value="11:00">11:00</option>
+              <option value="12:00">12:00</option>
+              <option value="13:00">13:00</option>
+              <option value="14:00">14:00</option>
+              <option value="15:00">15:00</option>
+              <option value="16:00">16:00</option>
+              <option value="17:00">17:00</option>
+              <option value="18:00">18:00</option>
+              <option value="19:00">19:00</option>
+              <option value="20:00">20:00</option>
+            </select>
+            <div class="field-error">Please choose a time.</div>
+          </div>
+        </div>
+        <div class="res-field">
+          <label for="resNotes">Special requests</label>
+          <textarea id="resNotes" placeholder="Birthday, anniversary, dietary needs..."></textarea>
+        </div>
+        <button type="submit" class="res-submit shery-magnet">Request Reservation</button>
+      </form>
+
+      <div class="res-success" id="resSuccess">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <h3>Reservation Received</h3>
+        <p>We will confirm your table by email within a few hours. Grazie!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── SECTION 10: TESTIMONIALS ───────── -->
+  <section class="testimonials" id="testimonials">
+    <div class="testimonials-inner">
+      <h2 class="testimonials-title shery-text-animate">What Our Guests Say</h2>
+      <div class="testimonial-grid" id="testimonialGrid"></div>
+    </div>
+  </section>
+
+  <!-- ───────── SECTION 11: FOOTER ───────── -->
+  <footer class="footer" id="footer">
+    <div class="footer-top">
+      <div class="footer-head">
+        <div>
+          <div class="footer-phone">+39 06 555 1234</div>
+          <a href="mailto:info@caffeviaroma.it" class="footer-email">info@caffeviaroma.it</a>
+          <div class="footer-hours">
+            <strong>Mon &ndash; Fri:</strong> 7:00 &ndash; 21:00<br>
+            <strong>Saturday:</strong> 8:00 &ndash; 22:00<br>
+            <strong>Sunday:</strong> 8:00 &ndash; 20:00
+          </div>
+          <div class="footer-location">
+            Via Roma 21, Trastevere<br>Rome, Italy
+          </div>
+          <div class="footer-socials">
+            <a href="https://instagram.com/caffeviaroma" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+            <a href="https://facebook.com/caffeviaroma" target="_blank" rel="noopener" aria-label="Facebook">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+            </a>
+            <a href="https://tiktok.com/@caffeviaroma" target="_blank" rel="noopener" aria-label="TikTok">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5"/></svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h4>Navigate</h4>
+            <a href="#about">Our Story</a>
+            <a href="#fullMenu">Menu</a>
+            <a href="#experience">The Experience</a>
+            <a href="#events">Events &amp; Specials</a>
+            <a href="#reservation">Reserve a Table</a>
+            <a href="#testimonials">Reviews</a>
+          </div>
+          <div class="footer-col">
+            <h4>Order &amp; Contact</h4>
+            <a href="tel:+39065551234">Call Us</a>
+            <a href="mailto:info@caffeviaroma.it">Email</a>
+            <a href="#footer">Takeaway &amp; Pick Up</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="cr">&copy; 2026 Caff&egrave; Via Roma. All rights reserved.</div>
+      <div class="legal">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.155.0/three.min.js"></script>
+  <script src="https://unpkg.com/sheryjs/dist/Shery.js"></script>
+  <script>
+    // ───────── SplitText (whileInView-style char reveal) ─────────
+    function splitChars(el) {
+      var text = el.textContent;
+      el.textContent = '';
+      var chars = [];
+      for (var i = 0; i < text.length; i++) {
+        var c = text[i];
+        if (c === ' ') {
+          var sp = document.createElement('span');
+          sp.className = 'split-space';
+          sp.innerHTML = '&nbsp;';
+          el.appendChild(sp);
+        } else {
+          var s = document.createElement('span');
+          s.className = 'split-char font-accent';
+          s.textContent = c;
+          el.appendChild(s);
+          chars.push(s);
+        }
+      }
+      return chars;
+    }
+    function animateChars(chars) {
+      chars.forEach(function (s, i) {
+        setTimeout(function () { s.classList.add('in'); }, i * 30);
+      });
+    }
+
+    var splitTargets = [].slice.call(document.querySelectorAll('[data-split]')).map(function (el) {
+      return { el: el, chars: splitChars(el), done: false };
+    });
+
+    var heroH1 = document.getElementById('heroH1');
+    var heroSub = document.getElementById('heroSub');
+    var experienceTitle = document.getElementById('experienceTitle');
+
+    window.addEventListener('load', function () {
+      splitTargets.forEach(function (t) {
+        if (t.el === heroH1) { animateChars(t.chars); t.done = true; }
+      });
+      setTimeout(function () {
+        splitTargets.forEach(function (t) {
+          if (t.el === heroSub) { animateChars(t.chars); t.done = true; }
+        });
+      }, 600);
+    });
+
+    var splitIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        splitTargets.forEach(function (t) {
+          if (t.el === e.target && !t.done) { animateChars(t.chars); t.done = true; }
+        });
+      });
+    }, { threshold: 0.3 });
+    splitIO.observe(experienceTitle);
+
+    // ───────── Navbar scroll state ─────────
+    var navbar = document.getElementById('navbar');
+    function onScrollNav() {
+      if (window.scrollY > 50) navbar.classList.add('scrolled');
+      else navbar.classList.remove('scrolled');
+    }
+    window.addEventListener('scroll', onScrollNav, { passive: true });
+    onScrollNav();
+
+    // ───────── Mobile menu ─────────
+    var mobileMenu = document.getElementById('mobileMenu');
+    document.getElementById('hamburger').addEventListener('click', function () { mobileMenu.classList.add('open'); });
+    document.getElementById('mobileClose').addEventListener('click', function () { mobileMenu.classList.remove('open'); });
+    [].slice.call(document.querySelectorAll('[data-acc]')).forEach(function (head) {
+      head.addEventListener('click', function () {
+        var body = head.nextElementSibling;
+        var open = body.classList.toggle('open');
+        head.querySelector('span').textContent = open ? '–' : '+';
+      });
+    });
+    [].slice.call(document.querySelectorAll('.mobile-menu .acc-body a')).forEach(function (a) {
+      a.addEventListener('click', function () { mobileMenu.classList.remove('open'); });
+    });
+
+    // ───────── HERO scroll-driven clip-path ─────────
+    var SCROLL_PER_SLIDE_VH = 150;
+    var heroWrap = document.getElementById('heroWrap');
+    var slides = [document.getElementById('slide0'), document.getElementById('slide1'), document.getElementById('slide2')];
+    function easeInOut(p) { return p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2; }
+    function updateHero() {
+      var vh = window.innerHeight;
+      var perSlide = (SCROLL_PER_SLIDE_VH / 100) * vh;
+      var top = heroWrap.getBoundingClientRect().top;
+      var scrolled = -top;
+      for (var i = 1; i < slides.length; i++) {
+        var start = (i - 1) * perSlide;
+        var local = (scrolled - start) / perSlide;
+        local = Math.max(0, Math.min(1, local));
+        var progress = easeInOut(local);
+        var rx = 5 + progress * 150;
+        var ry = 8 + progress * 150;
+        slides[i].style.clipPath = 'ellipse(' + rx + '% ' + ry + '% at 50% 50%)';
+      }
+    }
+    slides[0].style.clipPath = 'ellipse(150% 150% at 50% 50%)';
+    slides[1].style.clipPath = 'ellipse(5% 8% at 50% 50%)';
+    slides[2].style.clipPath = 'ellipse(5% 8% at 50% 50%)';
+    window.addEventListener('scroll', updateHero, { passive: true });
+    window.addEventListener('resize', updateHero);
+    updateHero();
+
+    // ───────── Scroll mask transition (Codrops / Hiro-kiii inspired) ─────────
+    (function initScrollMaskTransition() {
+      var stage = document.getElementById('scrollMaskStage');
+      if (!stage) return;
+
+      var SVG_NS = 'http://www.w3.org/2000/svg';
+      var layers = [].slice.call(stage.querySelectorAll('.smt-layer'));
+      var panels = [].slice.call(stage.querySelectorAll('.smt-panel'));
+      var progressFills = [].slice.call(stage.querySelectorAll('.smt-segment span'));
+      var timeline = null;
+      var progressTrigger = null;
+      var resizeTimer = null;
+
+      function clamp(value, min, max) {
+        return Math.max(min, Math.min(max, value));
+      }
+
+      function getBox() {
+        var width = 100;
+        var height = (window.innerHeight / Math.max(window.innerWidth, 1)) * width;
+        return { width: width, height: height };
+      }
+
+      function setSvgBox(layer, box) {
+        var base = layer.querySelector('.smt-mask-base');
+        var image = layer.querySelector('image');
+        layer.setAttribute('viewBox', '0 0 ' + box.width + ' ' + box.height);
+        base.setAttribute('width', box.width);
+        base.setAttribute('height', box.height);
+        image.setAttribute('width', box.width);
+        image.setAttribute('height', box.height);
+      }
+
+      function makeRect(attrs) {
+        var rect = document.createElementNS(SVG_NS, 'rect');
+        Object.keys(attrs).forEach(function (key) {
+          rect.setAttribute(key, attrs[key]);
+        });
+        rect.setAttribute('fill', 'white');
+        return rect;
+      }
+
+      function buildHorizontalBlinds(layer, index, box) {
+        var group = layer.querySelector('.smt-cells');
+        var rows = window.innerWidth < 700 ? 22 : 30;
+        var rowHeight = box.height / rows;
+        var rects = [];
+        group.textContent = '';
+        setSvgBox(layer, box);
+
+        for (var row = 0; row < rows; row++) {
+          var y = row * rowHeight;
+          var half = rowHeight / 2;
+          var center = y + half;
+          var revealed = index === 0;
+          var top = makeRect({
+            x: 0,
+            y: revealed ? y : center,
+            width: box.width,
+            height: revealed ? half : 0
+          });
+          var bottom = makeRect({
+            x: 0,
+            y: center,
+            width: box.width,
+            height: revealed ? half : 0
+          });
+          group.appendChild(top);
+          group.appendChild(bottom);
+          rects.push({ top: top, bottom: bottom, topY: y, half: half });
+        }
+        return rects;
+      }
+
+      function revealAllWithoutGsap(layerSets) {
+        layerSets.forEach(function (rects) {
+          rects.forEach(function (rect) {
+            rect.top.setAttribute('y', rect.topY);
+            rect.top.setAttribute('height', rect.half);
+            rect.bottom.setAttribute('height', rect.half);
+          });
+        });
+        panels.forEach(function (panel, index) {
+          panel.style.clipPath = index === panels.length - 1 ? 'inset(0 0 0 0)' : 'inset(0 0 100% 0)';
+          panel.style.opacity = index === panels.length - 1 ? '1' : '0';
+          panel.style.transform = index === panels.length - 1 ? 'translateY(0)' : 'translateY(40px)';
+        });
+      }
+
+      function buildTimeline() {
+        var box = getBox();
+        var layerSets = layers.map(function (layer, index) {
+          return buildHorizontalBlinds(layer, index, box);
+        });
+
+        if (timeline) timeline.kill();
+        if (progressTrigger) progressTrigger.kill();
+
+        if (!window.gsap || !window.ScrollTrigger) {
+          revealAllWithoutGsap(layerSets);
+          return;
+        }
+
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.set(layers.map(function (layer) { return layer.querySelector('image'); }), { scale: 1.08, transformOrigin: '50% 50%' });
+        gsap.set(panels, { clipPath: 'inset(0 0 100% 0)', opacity: 0, y: 40 });
+        gsap.set(panels[0], { clipPath: 'inset(0 0 0 0)', opacity: 1, y: 0 });
+        gsap.set(progressFills, { width: '0%' });
+
+        timeline = gsap.timeline({
+          scrollTrigger: {
+            trigger: stage,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 2.25,
+            invalidateOnRefresh: true
+          }
+        });
+
+        var cursor = 0;
+        for (var i = 1; i < layerSets.length; i++) {
+          timeline.to(panels[i - 1], {
+            clipPath: 'inset(0 0 100% 0)',
+            opacity: 0,
+            y: -34,
+            duration: 0.46,
+            ease: 'power2.inOut'
+          }, cursor);
+
+          layerSets[i].forEach(function (rect, row) {
+            var at = cursor + 0.08 + row * 0.018;
+            timeline.to(rect.top, {
+              attr: { y: rect.topY, height: rect.half },
+              duration: 0.74,
+              ease: 'power3.out'
+            }, at);
+            timeline.to(rect.bottom, {
+              attr: { height: rect.half },
+              duration: 0.74,
+              ease: 'power3.out'
+            }, at);
+          });
+
+          timeline.to(layers[i].querySelector('image'), {
+            scale: 1,
+            duration: 1.35,
+            ease: 'none'
+          }, cursor);
+
+          timeline.to(panels[i], {
+            clipPath: 'inset(0 0 0 0)',
+            opacity: 1,
+            y: 0,
+            duration: 0.62,
+            ease: 'power2.out'
+          }, cursor + 0.48);
+
+          cursor += 1.38;
+        }
+        timeline.to({}, { duration: 0.5 });
+
+        progressTrigger = ScrollTrigger.create({
+          trigger: stage,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: true,
+          onUpdate: function (self) {
+            var total = progressFills.length;
+            progressFills.forEach(function (fill, index) {
+              var segmentProgress = clamp((self.progress - index / total) * total, 0, 1);
+              fill.style.width = (segmentProgress * 100).toFixed(2) + '%';
+            });
+          }
+        });
+
+        ScrollTrigger.refresh();
+      }
+
+      buildTimeline();
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(buildTimeline, 180);
+      });
+    })();
+
+    // ───────── Gallery (menu highlight images) ─────────
+    var galleryItems = [
+      { label: 'Espresso', image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=900&q=85', span: false },
+      { label: 'Cornetti', image: 'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=900&q=85', span: false },
+      { label: 'Cappuccino', image: 'https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=900&q=85', span: false },
+      { label: 'Tiramisu', image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=900&q=85', span: false },
+      { label: 'Trastevere Terrace', image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=85', span: false },
+      { label: 'Homemade Pastries', image: 'https://images.unsplash.com/photo-1517433367423-c7e5b0f35086?auto=format&fit=crop&w=1200&q=85', span: true },
+      { label: 'Hot Chocolate', image: 'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=900&q=85', span: false }
+    ];
+    var galleryGrid = document.getElementById('galleryGrid');
+    galleryItems.forEach(function (it, i) {
+      var wrap = document.createElement('div');
+      wrap.className = 'g-item' + (it.span ? ' span2' : '');
+      wrap.style.transitionDelay = (i * 0.05) + 's';
+      var frame = document.createElement('div');
+      frame.className = 'g-frame shery-mask-card';
+      var img = document.createElement('div');
+      img.className = 'g-img';
+      img.style.backgroundImage = "url('" + it.image + "')";
+      frame.appendChild(img);
+      var lbl = document.createElement('div');
+      lbl.className = 'g-label';
+      lbl.textContent = it.label;
+      wrap.appendChild(frame);
+      wrap.appendChild(lbl);
+      galleryGrid.appendChild(wrap);
+    });
+    var galleryIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); galleryIO.unobserve(e.target); }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -15% 0px' });
+    [].slice.call(document.querySelectorAll('.g-item')).forEach(function (el) { galleryIO.observe(el); });
+
+    // ───────── Full Menu data ─────────
+    var menuData = {
+      'menu-coffee': [
+        { name: 'Espresso (Caffè)', desc: 'Classic short, rich Italian espresso', price: '€1.20' },
+        { name: 'Caffè Macchiato', desc: 'Espresso "stained" with a touch of milk foam', price: '€1.50' },
+        { name: 'Cappuccino', desc: 'Espresso with steamed milk and foam', price: '€2.80' },
+        { name: 'Caffè Americano', desc: 'Espresso topped with hot water', price: '€2.50' },
+        { name: 'Latte Macchiato', desc: 'Warm milk with a shot of espresso', price: '€3.50' },
+        { name: 'Hot Chocolate', desc: 'Thick, rich Italian-style chocolate', price: '€3.80' },
+        { name: 'Herbal Teas', desc: 'Selection of calming and refreshing blends', price: '€3.00' }
+      ],
+      'menu-cold': [
+        { name: 'Iced Coffee', desc: 'Espresso over ice', price: '€3.00' },
+        { name: 'Fresh Orange Juice', desc: 'Squeezed to order', price: '€4.00' },
+        { name: 'Sparkling & Still Water', desc: 'San Pellegrino or Acqua Panna', price: '€2.00' },
+        { name: 'Homemade Lemonade', desc: 'Fresh lemons, mint, a touch of sugar', price: '€4.50' }
+      ],
+      'menu-pastry': [
+        { name: 'Cornetto alla Crema', desc: 'Cream-filled croissant', price: '€2.50' },
+        { name: 'Cornetto al Cioccolato', desc: 'Chocolate-filled croissant', price: '€2.50' },
+        { name: 'Crostata di Marmellata', desc: 'Jam tart', price: '€3.00' },
+        { name: 'Tiramisù della Casa', desc: 'House tiramisu', price: '€5.50' },
+        { name: 'Assorted Biscotti', desc: 'Selection of traditional Italian biscuits', price: '€3.50' }
+      ],
+      'menu-food': [
+        { name: 'Toast with Prosciutto & Cheese', desc: 'Grilled toast, prosciutto crudo, mozzarella', price: '€5.50' },
+        { name: 'Bruschetta al Pomodoro', desc: 'Toasted bread, fresh tomato, basil, olive oil', price: '€4.50' },
+        { name: 'Mixed Cheese & Salumi Plate', desc: 'Selection of Italian cheeses and cured meats', price: '€9.00' },
+        { name: 'Seasonal Salads', desc: 'Fresh, locally sourced seasonal greens', price: '€7.50' }
+      ]
+    };
+    Object.keys(menuData).forEach(function (catId) {
+      var cat = document.getElementById(catId);
+      var items = menuData[catId];
+      items.forEach(function (item) {
+        var row = document.createElement('div');
+        row.className = 'menu-row shery-hover-media';
+        row.innerHTML = '<div><div class="menu-row-name">' + item.name + '</div><div class="menu-row-desc">' + item.desc + '</div></div><div class="menu-row-price">' + item.price + '</div>';
+        cat.appendChild(row);
+      });
+    });
+    var menuCatIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); menuCatIO.unobserve(e.target); }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    [].slice.call(document.querySelectorAll('.menu-category')).forEach(function (el) { menuCatIO.observe(el); });
+
+    // ───────── About scroll-reveal text ─────────
+    var aboutBody = document.getElementById('aboutBody');
+    var aboutWords = aboutBody.textContent.trim().split(/\s+/);
+    aboutBody.textContent = '';
+    var wordEls = aboutWords.map(function (w) {
+      var s = document.createElement('span');
+      s.className = 'word';
+      s.textContent = w;
+      aboutBody.appendChild(s);
+      aboutBody.appendChild(document.createTextNode(' '));
+      return s;
+    });
+    var aboutSection = document.getElementById('about');
+    function updateAbout() {
+      var rect = aboutSection.getBoundingClientRect();
+      var vh = window.innerHeight;
+      var total = rect.height + vh;
+      var prog = (vh - rect.top) / total;
+      prog = Math.max(0, Math.min(1, prog));
+      var n = wordEls.length;
+      wordEls.forEach(function (el, i) {
+        var wStart = i / n;
+        var local = (prog - wStart) * 3;
+        local = Math.max(0, Math.min(1, local));
+        el.style.opacity = (0.1 + 0.9 * local).toFixed(3);
+        el.style.filter = 'blur(' + (4 - 4 * local).toFixed(2) + 'px)';
+      });
+      var rot = 3 - 3 * prog;
+      aboutBody.style.transform = 'rotate(' + rot.toFixed(2) + 'deg)';
+    }
+    window.addEventListener('scroll', updateAbout, { passive: true });
+    window.addEventListener('resize', updateAbout);
+    updateAbout();
+
+    // ───────── Experience cards ─────────
+    var eIcons = {
+      coffee: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>',
+      warmth: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446A9 9 0 1 1 12 3z"/></svg>',
+      wifi: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1"/></svg>',
+      takeaway: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>'
+    };
+    var eCards = [
+      { label: 'Authentic Coffee', ico: eIcons.coffee },
+      { label: 'Cozy Atmosphere', ico: eIcons.warmth },
+      { label: 'Free Wi-Fi', ico: eIcons.wifi },
+      { label: 'Takeaway & Pick Up', ico: eIcons.takeaway }
+    ];
+    var experienceCards = document.getElementById('experienceCards');
+    eCards.forEach(function (c) {
+      var card = document.createElement('div');
+      card.className = 'e-card shery-magnet';
+      card.innerHTML = '<div class="e-ico">' + c.ico + '</div><div class="e-lbl">' + c.label + '</div>';
+      experienceCards.appendChild(card);
+    });
+    var eIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        var cards = [].slice.call(experienceCards.children);
+        cards.forEach(function (card, i) {
+          setTimeout(function () { card.classList.add('in'); }, i * 150);
+        });
+        eIO.disconnect();
+      });
+    }, { threshold: 0.2, rootMargin: '0px 0px -10% 0px' });
+    eIO.observe(experienceCards);
+
+    // ───────── Events ─────────
+    var eventsData = [
+      { title: 'Monthly Coffee Tasting Evening', text: 'Join us on the first Thursday of each month to explore Italian coffee styles and taste different roasts with our head barista. Groups welcome.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' },
+      { title: 'Live Acoustic Music — Friday Nights', text: 'Enjoy live acoustic sets from local Roman musicians on selected Friday evenings. No cover charge — just good music and great coffee.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>' },
+      { title: 'Seasonal Specials', text: 'Winter: spiced hot chocolate and panettone slices. Summer: iced espresso drinks and lemon granita. Always something new to try.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>' },
+      { title: 'Order & Pick Up', text: 'Call or place an online order for pickup within 20–30 minutes. Takeaway available for all drinks and pastries. Delivery via local apps coming soon.', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>' }
+    ];
+    var eventsContainer = document.getElementById('eventsContainer');
+    eventsData.forEach(function (ev) {
+      var card = document.createElement('div');
+      card.className = 'event-card';
+      card.innerHTML = '<div class="event-icon">' + ev.icon + '</div><div class="event-text"><h3>' + ev.title + '</h3><p>' + ev.text + '</p></div>';
+      eventsContainer.appendChild(card);
+    });
+    var evIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); evIO.unobserve(e.target); }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    [].slice.call(document.querySelectorAll('.event-card')).forEach(function (el) { evIO.observe(el); });
+
+    // ───────── Testimonials ─────────
+    var reviews = [
+      { text: 'The best espresso we had in Rome — cozy, friendly, and authentic.', reviewer: 'Sarah & Tom, London' },
+      { text: 'Feels like a local secret. The staff are so welcoming and the pastries are incredible.', reviewer: 'Marco, Milan' },
+      { text: 'Perfect spot to sit with a cappuccino and watch Trastevere life go by.', reviewer: 'Emily, New York' }
+    ];
+    var testimonialGrid = document.getElementById('testimonialGrid');
+    reviews.forEach(function (r) {
+      var card = document.createElement('div');
+      card.className = 'testimonial-card';
+      card.innerHTML = '<p>' + r.text + '</p><div class="reviewer">— ' + r.reviewer + '</div>';
+      testimonialGrid.appendChild(card);
+    });
+    var tIO = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); tIO.unobserve(e.target); }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -10% 0px' });
+    [].slice.call(document.querySelectorAll('.testimonial-card')).forEach(function (el) { tIO.observe(el); });
+
+    // ───────── Pinned ritual scroll story ─────────
+    (function initPinnedRitual() {
+      var stage = document.getElementById('pinRitual');
+      if (!stage || !window.gsap || !window.ScrollTrigger) return;
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      gsap.registerPlugin(ScrollTrigger);
+
+      var panels = [].slice.call(stage.querySelectorAll('.pin-panel'));
+      var progressFill = document.getElementById('pinProgressFill');
+      var pinCount = document.getElementById('pinCount');
+      var images = [].slice.call(stage.querySelectorAll('.shery-scroll-images img'));
+      var sticky = stage.querySelector('.pin-ritual-sticky');
+      if (!panels.length || !progressFill || !pinCount || !sticky) return;
+
+      gsap.set(panels.slice(1), { opacity: 0, y: 36, filter: 'blur(8px)' });
+      gsap.set(images.slice(1), { opacity: 0 });
+      gsap.set(images[0], { opacity: 1 });
+      gsap.set(images, { scale: 1.08, transformOrigin: '50% 50%' });
+
+      var timeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: stage,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 1.4,
+          pin: sticky,
+          anticipatePin: 1,
+          pinSpacing: true,
+          invalidateOnRefresh: true,
+          onUpdate: function (self) {
+            var index = Math.min(panels.length - 1, Math.floor(self.progress * panels.length));
+            pinCount.textContent = '0' + (index + 1) + ' / 03';
+            progressFill.style.width = (self.progress * 100).toFixed(2) + '%';
+          }
+        }
+      });
+
+      panels.forEach(function (panel, index) {
+        if (index === 0) return;
+        timeline.to(panels[index - 1], {
+          opacity: 0,
+          y: -34,
+          filter: 'blur(8px)',
+          duration: 0.42,
+          ease: 'power2.inOut'
+        }, index - 0.18);
+        timeline.to(panel, {
+          opacity: 1,
+          y: 0,
+          filter: 'blur(0px)',
+          duration: 0.55,
+          ease: 'power2.out'
+        }, index);
+        if (images[index]) {
+          timeline.to(images[index - 1], {
+            opacity: 0,
+            duration: 0.42,
+            ease: 'power2.inOut'
+          }, index - 0.12);
+          timeline.to(images[index], {
+            opacity: 1,
+            duration: 0.58,
+            ease: 'power2.out'
+          }, index);
+        }
+      });
+
+      timeline.to(images, {
+        scale: 1,
+        duration: panels.length,
+        ease: 'none'
+      }, 0);
+
+      window.addEventListener('resize', function () {
+        ScrollTrigger.refresh();
+      });
+    })();
+
+    // ───────── SheryJS interactive polish ─────────
+    (function initSheryEffects() {
+      var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var finePointer = window.matchMedia('(pointer: fine)').matches && window.innerWidth > 767;
+      if (reducedMotion || !window.Shery) return;
+      document.body.classList.add('shery-enabled');
+
+      function runEffect(fn) {
+        try { fn(); } catch (err) { /* Keep the core site usable if a CDN effect fails. */ }
+      }
+
+      runEffect(function () {
+        if (finePointer) {
+          Shery.mouseFollower({
+            skew: true,
+            ease: 'cubic-bezier(0.23, 1, 0.320, 1)',
+            duration: 0.8
+          });
+        }
+      });
+
+      runEffect(function () {
+        if (finePointer) {
+          Shery.makeMagnet('.shery-magnet', {
+            ease: 'cubic-bezier(0.23, 1, 0.320, 1)',
+            duration: 0.85
+          });
+        }
+      });
+
+      runEffect(function () {
+        if (finePointer) {
+          Shery.imageMasker('.shery-mask-card', {
+            mouseFollower: true,
+            text: 'Taste',
+            ease: 'cubic-bezier(0.23, 1, 0.320, 1)',
+            duration: 0.9
+          });
+        }
+      });
+
+      runEffect(function () {
+        Shery.textAnimate('.shery-text-animate', {
+          style: 1,
+          y: 14,
+          delay: 0.05,
+          duration: 1.4,
+          ease: 'cubic-bezier(0.23, 1, 0.320, 1)',
+          multiplier: 0.08
+        });
+      });
+
+      runEffect(function () {
+        if (finePointer) {
+          Shery.hoverWithMediaCircle('.shery-hover-media', {
+            images: [
+              'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1534778101976-62847782c213?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1597318181409-cf64d0b5d8a2?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1600271886742-f049cd451bba?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1559827260-dc66d52bef19?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1621263764928-df1444c5e859?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1555507036-ab1f4038808a?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1509365465985-25d11c17e812?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1519915028121-7d3463d20b13?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1517433367423-c7e5b0f35086?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=500&q=80',
+              'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=500&q=80'
+            ]
+          });
+        }
+      });
+
+      runEffect(function () {
+        if (window.innerWidth < 768) return;
+        Shery.imageEffect('.shery-scroll-images', {
+          style: 5,
+          slideStyle: function (setScroll) {
+            if (!window.ScrollTrigger) return;
+            ScrollTrigger.create({
+              trigger: '#pinRitual',
+              start: 'top top',
+              end: 'bottom bottom',
+              scrub: true,
+              onUpdate: function (self) {
+                setScroll(self.progress * 2);
+              }
+            });
+          }
+        });
+      });
+    })();
+
+    // ───────── Reservation form validation ─────────
+    var resForm = document.getElementById('resForm');
+    var resSuccess = document.getElementById('resSuccess');
+
+    resForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var valid = true;
+      var fields = [
+        { id: 'resName', validate: function (v) { return v.trim().length > 0; } },
+        { id: 'resEmail', validate: function (v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); } },
+        { id: 'resGuests', validate: function (v) { return v !== ''; } },
+        { id: 'resDate', validate: function (v) { return v !== ''; } },
+        { id: 'resTime', validate: function (v) { return v !== ''; } }
+      ];
+      fields.forEach(function (f) {
+        var el = document.getElementById(f.id);
+        var field = el.closest('.res-field');
+        if (!f.validate(el.value)) {
+          field.classList.add('has-error');
+          valid = false;
+        } else {
+          field.classList.remove('has-error');
+        }
+      });
+      if (valid) {
+        resForm.style.display = 'none';
+        resSuccess.classList.add('show');
+      }
+    });
+
+    ['resName', 'resEmail', 'resGuests', 'resDate', 'resTime'].forEach(function (id) {
+      var el = document.getElementById(id);
+      el.addEventListener('input', function () { el.closest('.res-field').classList.remove('has-error'); });
+      el.addEventListener('change', function () { el.closest('.res-field').classList.remove('has-error'); });
+    });
+  </script>
+</body>
+</html>
